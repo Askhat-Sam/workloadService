@@ -21,6 +21,22 @@ public class TrainingWorkload {
     public TrainingWorkload() {
     }
 
+    public static TrainingWorkload createTrainingWorkload(TrainingWorkloadData trainingWorkloadData){
+        Map<Integer, Map<Integer, Long>> durationMap = new HashMap<>();
+
+        int year = trainingWorkloadData.getTrainingDate().getYear();
+        int month = trainingWorkloadData.getTrainingDate().getMonthValue();
+
+        durationMap.computeIfAbsent(year, y -> new HashMap<>()).merge(month, trainingWorkloadData.getTrainingDuration(), Long::sum);
+
+        return new TrainingWorkload(trainingWorkloadData.getTrainerUsername(),
+                trainingWorkloadData.getTrainerFirstName(),
+                trainingWorkloadData.getTrainerLastName(),
+                trainingWorkloadData.isActive(),
+                durationMap);
+    }
+
+
     public TrainingWorkload(String trainerUsername, String trainerFirstName, String trainerLastName, boolean trainerStatus, Map<Integer, Map<Integer, Long>> trainingDuration) {
         this.trainerUsername = trainerUsername;
         this.trainerFirstName = trainerFirstName;
@@ -29,21 +45,22 @@ public class TrainingWorkload {
         this.trainingDuration = trainingDuration;
     }
 
-    public void updateTrainingDuration(String actionType, Integer year, Integer month, Long trainingDurationValue) {
+    public void updateTrainingDuration(TrainingWorkloadData trainingWorkloadData) {
         // Check if the year exists, if not, initialize it with an empty map for months
-        trainingDuration.putIfAbsent(year, new HashMap<>());
+        trainingDuration.putIfAbsent(trainingWorkloadData.getTrainingDate().getYear(), new HashMap<>());
 
         // Get current value of the training duration for the month. If there's no current value, initialize it to 0
-        Map<Integer, Long> monthlyMap = trainingDuration.get(year);
-        Long currentDuration = monthlyMap.getOrDefault(month, 0L);
+        Map<Integer, Long> monthlyMap = trainingDuration.get(trainingWorkloadData.getTrainingDate().getYear());
+        Long currentDuration = monthlyMap.getOrDefault(trainingWorkloadData.getTrainingDate().getMonth().getValue(), 0L);
 
         // Add or subtract the trainingDurationValue based on actionType value
-        switch (actionType) {
-            case "ADD" -> monthlyMap.put(month, currentDuration + trainingDurationValue);
-            case "DELETE" -> monthlyMap.put(month, Math.max(0, currentDuration - trainingDurationValue)); // Used max() to handle cases when the trainingDuration becomes negative
-            default -> throw new IllegalArgumentException("Unknown action type: " + actionType);
+        switch (trainingWorkloadData.getActionType()) {
+            case ADD ->  monthlyMap.put(trainingWorkloadData.getTrainingDate().getMonth().getValue(), currentDuration + trainingWorkloadData.getTrainingDuration());
+            case DELETE -> monthlyMap.put(trainingWorkloadData.getTrainingDate().getMonth().getValue(), Math.max(0, currentDuration - trainingWorkloadData.getTrainingDuration())); // Used max() to handle cases when the trainingDuration becomes negative
+            default -> throw new IllegalArgumentException("Unknown action type: " + trainingWorkloadData.getActionType()); // is required considering the usage of enum ActionType?
         }
     }
+
 
     public String getTrainerUsername() {
         return trainerUsername;
