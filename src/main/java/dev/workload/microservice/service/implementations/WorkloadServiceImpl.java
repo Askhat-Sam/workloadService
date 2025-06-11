@@ -2,7 +2,7 @@ package dev.workload.microservice.service.implementations;
 
 import dev.workload.microservice.model.TrainingWorkload;
 import dev.workload.microservice.model.TrainingWorkloadData;
-import dev.workload.microservice.repository.implementations.InMemoryTrainingWorkloadRepository;
+import dev.workload.microservice.repository.interfaces.TrainingWorkloadRepository;
 import dev.workload.microservice.service.interfaces.WorkloadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,26 +10,27 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WorkloadServiceImpl implements WorkloadService {
-    private final InMemoryTrainingWorkloadRepository inMemoryTrainingWorkloadRepository;
+    private final TrainingWorkloadRepository trainingWorkloadRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public WorkloadServiceImpl(InMemoryTrainingWorkloadRepository inMemoryTrainingWorkloadRepository) {
-        this.inMemoryTrainingWorkloadRepository = inMemoryTrainingWorkloadRepository;
+    public WorkloadServiceImpl(TrainingWorkloadRepository trainingWorkloadRepository) {
+        this.trainingWorkloadRepository = trainingWorkloadRepository;
     }
 
     @Override
     public TrainingWorkload addTrainingWorkload(TrainingWorkloadData trainingWorkloadData) {
         // Check if the trainer exist in DB
-        TrainingWorkload trainingWorkload;
-        if (inMemoryTrainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()) != null) {
-            trainingWorkload = inMemoryTrainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername());
+        TrainingWorkload trainingWorkload =trainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername());
+
+        if (trainingWorkload != null) {
             trainingWorkload.updateTrainingDuration(trainingWorkloadData);
-            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been updated " + inMemoryTrainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
+            trainingWorkloadRepository.save(trainingWorkload);
+            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been updated " + trainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
         } else { // if trainer not exist in DB
             // static method TrainingWorkload.createWorkload(trainingWorkloadRequest)
             trainingWorkload =TrainingWorkload.createTrainingWorkload(trainingWorkloadData);
-            inMemoryTrainingWorkloadRepository.save(trainingWorkload);
-            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been added " + inMemoryTrainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
+            trainingWorkloadRepository.save(trainingWorkload);
+            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been added " + trainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
         }
         return trainingWorkload;
     }
@@ -38,7 +39,7 @@ public class WorkloadServiceImpl implements WorkloadService {
     public TrainingWorkload getWorkloadSummary(String username)  {
 
         // Get TrainingWorkload by username
-        TrainingWorkload trainingWorkload = inMemoryTrainingWorkloadRepository.get(username);
+        TrainingWorkload trainingWorkload = trainingWorkloadRepository.get(username);
 
         // Check if the trainer has any training records
         if (trainingWorkload != null) {

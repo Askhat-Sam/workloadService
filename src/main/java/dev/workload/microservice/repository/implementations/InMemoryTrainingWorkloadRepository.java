@@ -14,8 +14,6 @@ public class InMemoryTrainingWorkloadRepository implements TrainingWorkloadRepos
     @Override
     public void save(TrainingWorkload trainingWorkload) {
         inMemoryStorage.put(trainingWorkload.getTrainerUsername(), trainingWorkload);
-        System.out.println(inMemoryStorage);
-
     }
 
     @Override
