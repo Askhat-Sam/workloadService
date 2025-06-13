@@ -24,14 +24,13 @@ public class WorkloadServiceImpl implements WorkloadService {
 
         if (trainingWorkload != null) {
             trainingWorkload.updateTrainingDuration(trainingWorkloadData);
-            trainingWorkloadRepository.save(trainingWorkload);
-            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been updated " + trainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
+            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been updated " + trainingWorkload);
         } else { // if trainer not exist in DB
             // static method TrainingWorkload.createWorkload(trainingWorkloadRequest)
             trainingWorkload =TrainingWorkload.createTrainingWorkload(trainingWorkloadData);
-            trainingWorkloadRepository.save(trainingWorkload);
-            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been added " + trainingWorkloadRepository.get(trainingWorkloadData.getTrainerUsername()));
+            logger.info("Workload for the trainer : [" + trainingWorkloadData.getTrainerUsername() + "] has been added " + trainingWorkload);
         }
+        trainingWorkloadRepository.save(trainingWorkload);
         return trainingWorkload;
     }
 
