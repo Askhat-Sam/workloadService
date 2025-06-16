@@ -1,14 +1,20 @@
 package dev.workload.microservice.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.ConditionalRejectingErrorHandler;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ErrorHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +22,7 @@ import java.util.Map;
 
 @Configuration
 public class RabbitMQConfig {
+    private static final Logger log = LoggerFactory.getLogger(RabbitMQConfig.class);
     @Value("${rabbitmq.update.queue-name}")
     private String updateQueue;
     @Value("${rabbitmq.update.exchange-name}")
@@ -71,5 +78,24 @@ public class RabbitMQConfig {
         idClassMapping.put("dev.gymService.model.dto.TrainingWorkloadRequest", dev.workload.microservice.model.dto.TrainingWorkloadRequest.class);
         classMapper.setIdClassMapping(idClassMapping);
         return classMapper;
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setConcurrentConsumers(3);
+        factory.setMaxConcurrentConsumers(10);
+        factory.setErrorHandler(customContainerErrorHandler());
+        factory.setMessageConverter(jsonMessageConverter());
+        return factory;
+    }
+
+    @Bean
+    public ErrorHandler customContainerErrorHandler() {
+        return new ConditionalRejectingErrorHandler(t -> {
+            log.error("Error in listener container", t);
+            return true;
+        });
     }
 }

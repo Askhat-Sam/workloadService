@@ -18,13 +18,13 @@ public class WorkloadListenerService {
         this.trainingWorkloadMapper = trainingWorkloadMapper;
     }
 
-    @RabbitListener(queues = "${rabbitmq.update.queue-name}")
+    @RabbitListener(queues = "${rabbitmq.update.queue-name}", containerFactory = "rabbitListenerContainerFactory")
     public void addTrainingWorkload(TrainingWorkloadRequest request) {
         TrainingWorkloadData data = trainingWorkloadMapper.trainingWokrloddRequestToTrainingWorkloadData(request);
         workloadService.addTrainingWorkload(data);
     }
 
-    @RabbitListener(queues = "${rabbitmq.get-summary.queue-name}")
+    @RabbitListener(queues = "${rabbitmq.get-summary.queue-name}", containerFactory = "rabbitListenerContainerFactory")
     public TrainingWorkload getWorkloadSummary(TrainingWorkloadRequest request) {
         return workloadService.getWorkloadSummary(request.getTrainerUsername());
     }
