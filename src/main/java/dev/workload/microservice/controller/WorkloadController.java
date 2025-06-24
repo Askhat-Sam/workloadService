@@ -40,7 +40,7 @@ public class WorkloadController {
     public TrainingWorkload getWorkloadSummary(@RequestParam String username) {
         TrainingWorkload trainingWorkload = workloadService.getWorkloadSummary(username);
         logger.info("Workload for the trainer : " + username + " has been retrieved from DB and equal to - " + trainingWorkload);
-        return workloadService.getWorkloadSummary(username);
+        return trainingWorkload;
     }
 
 }
