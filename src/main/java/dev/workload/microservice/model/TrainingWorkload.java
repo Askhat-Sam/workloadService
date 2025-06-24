@@ -30,7 +30,6 @@ public class TrainingWorkload {
     }
 
     public static TrainingWorkload createTrainingWorkload(TrainingWorkloadData trainingWorkloadData){
-        System.out.println("Creating TrainingWorkload with data: " + trainingWorkloadData);
         Map<Integer, Map<Integer, Long>> durationMap = new HashMap<>();
 
         int year = trainingWorkloadData.getTrainingDate().getYear();
