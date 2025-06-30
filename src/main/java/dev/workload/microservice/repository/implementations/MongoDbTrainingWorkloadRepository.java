@@ -1,6 +1,7 @@
 package dev.workload.microservice.repository.implementations;
 
 import dev.workload.microservice.model.TrainingWorkload;
+import dev.workload.microservice.model.TrainingWorkloadDocument;
 import dev.workload.microservice.repository.interfaces.TrainingWorkloadRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,12 +18,14 @@ public class MongoDbTrainingWorkloadRepository implements TrainingWorkloadReposi
 
     @Override
     public void save(TrainingWorkload trainingWorkload) {
-        mongoTemplate.save(trainingWorkload);
+        TrainingWorkloadDocument trainingWorkloadDocument = TrainingWorkloadDocument.fromTrainingWorkloadToTrainingWorkloadDocument(trainingWorkload);
+        mongoTemplate.save(trainingWorkloadDocument);
     }
 
     @Override
     public TrainingWorkload get(String username) {
         Query query = new Query(Criteria.where("trainerUsername").is(username));
-        return mongoTemplate.findOne(query, TrainingWorkload.class);
+        TrainingWorkloadDocument document = mongoTemplate.findOne(query, TrainingWorkloadDocument.class);
+        return document!=null?document.fromTrainingWorkloadDocumentToTrainingWorkload():null;
     }
 }

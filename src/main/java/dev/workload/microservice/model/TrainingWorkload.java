@@ -2,19 +2,11 @@ package dev.workload.microservice.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
 import java.util.Map;
-@Document
-@CompoundIndexes({
-        @CompoundIndex(name = "first_last_name_idx", def = "{'trainerFirstName': 1, 'trainerLastName': 1}")
-})
+
 public class TrainingWorkload {
-    @Id
     @NotBlank
     private String trainerUsername;
     @NotBlank
