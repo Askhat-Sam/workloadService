@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+
 public class InMemoryTrainingWorkloadRepository implements TrainingWorkloadRepository {
     private final Map<String, TrainingWorkload> inMemoryStorage = new HashMap<>();
 
