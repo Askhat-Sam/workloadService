@@ -32,7 +32,7 @@ public class WorkloadController {
 
         // Add training workload to DB
         workloadService.addTrainingWorkload(trainingWorkloadData);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
