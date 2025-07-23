@@ -4,9 +4,10 @@ import dev.workload.microservice.model.ActionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Builder;
 
 import java.time.LocalDate;
-
+@Builder
 public class TrainingWorkloadRequest {
     @NotBlank
     private String trainerUsername;

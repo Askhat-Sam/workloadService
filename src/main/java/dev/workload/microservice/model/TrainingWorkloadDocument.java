@@ -97,4 +97,15 @@ public class TrainingWorkloadDocument {
                 this.trainingDuration
         );
     }
+
+    @Override
+    public String toString() {
+        return "TrainingWorkloadDocument{" +
+                "trainerUsername='" + trainerUsername + '\'' +
+                ", trainerFirstName='" + trainerFirstName + '\'' +
+                ", trainerLastName='" + trainerLastName + '\'' +
+                ", trainerStatus=" + trainerStatus +
+                ", trainingDuration=" + trainingDuration +
+                '}';
+    }
 }

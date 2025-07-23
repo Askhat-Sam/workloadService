@@ -1,4 +1,4 @@
-package service;
+package unit.service;
 
 import dev.workload.microservice.model.TrainingWorkload;
 import dev.workload.microservice.model.TrainingWorkloadData;

@@ -77,6 +77,10 @@ public class RabbitMQConfig {
         Map<String, Class<?>> idClassMapping = new HashMap<>();
         idClassMapping.put("dev.gymService.model.dto.TrainingWorkloadRequest", dev.workload.microservice.model.dto.TrainingWorkloadRequest.class);
         classMapper.setIdClassMapping(idClassMapping);
+        classMapper.setTrustedPackages(
+                "dev.workload.microservice.model",
+                "java.util", "java.lang"
+        );
         return classMapper;
     }
 

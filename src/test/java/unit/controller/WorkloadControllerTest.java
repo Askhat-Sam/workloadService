@@ -1,4 +1,4 @@
-package controller;
+package unit.controller;
 
 import dev.workload.microservice.controller.WorkloadController;
 import dev.workload.microservice.model.TrainingWorkload;
@@ -39,7 +39,7 @@ class WorkloadControllerTest {
         ResponseEntity<String> response = workloadController.updateWorkload(request);
 
         // Then
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(trainingWorkloadMapper).trainingWokrloddRequestToTrainingWorkloadData(request);
         verify(workloadService).addTrainingWorkload(mappedData);
     }
